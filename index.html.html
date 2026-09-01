@@ -1,0 +1,4480 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>๙หน้าฮาร์ดแวร์ - Smart Hardware OS</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap"
+rel="stylesheet">
+
+
+<style>
+
+body {
+    font-family: 'Kanit', sans-serif;
+}
+
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #94a3b8;
+    border-radius: 10px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+button {
+    transition: .15s;
+}
+
+button:active {
+    transform: scale(.96);
+}
+
+.card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+}
+
+.feature-card {
+    border-radius: 20px;
+    transition: .2s;
+}
+
+.feature-card:hover {
+    transform: translateY(-2px);
+}
+
+.modal-bg {
+    background: rgba(15,23,42,.65);
+    backdrop-filter: blur(5px);
+}
+
+.input {
+    width: 100%;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 13px;
+    outline: none;
+}
+
+.input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+}
+
+.gradient-blue {
+    background: linear-gradient(135deg,#1d4ed8,#2563eb,#38bdf8);
+}
+
+.gradient-purple {
+    background: linear-gradient(135deg,#4338ca,#7c3aed,#a855f7);
+}
+
+.gradient-green {
+    background: linear-gradient(135deg,#047857,#10b981,#34d399);
+}
+
+.gradient-orange {
+    background: linear-gradient(135deg,#c2410c,#f97316,#fbbf24);
+}
+
+.badge {
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    padding:4px 8px;
+    border-radius:999px;
+    font-size:10px;
+    font-weight:500;
+}
+
+.stat-box {
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:14px;
+    padding:12px;
+}
+
+.nav-btn.active {
+    color:#2563eb;
+}
+
+.nav-btn.active i {
+    transform:translateY(-2px);
+}
+
+.nav-btn i {
+    transition:.2s;
+}
+
+.drop-zone {
+    border:2px dashed #93c5fd;
+    background:#eff6ff;
+    border-radius:18px;
+    padding:30px 15px;
+    text-align:center;
+    cursor:pointer;
+}
+
+.drop-zone:hover {
+    background:#dbeafe;
+}
+
+.blueprint-preview {
+    position:relative;
+    overflow:hidden;
+    border-radius:15px;
+    background:#e0f2fe;
+    min-height:190px;
+}
+
+.blueprint-grid {
+    background-image:
+        linear-gradient(#60a5fa 1px,transparent 1px),
+        linear-gradient(90deg,#60a5fa 1px,transparent 1px);
+    background-size:20px 20px;
+}
+
+
+.truck-bed {
+    position:relative;
+    height:240px;
+    border:5px solid #475569;
+    background:#cbd5e1;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.load-item {
+    position:absolute;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-size:10px;
+    font-weight:bold;
+    border-radius:7px;
+    box-shadow:0 3px 6px rgba(0,0,0,.2);
+}
+
+.mic-pulse {
+    animation:pulseMic 1.2s infinite;
+}
+
+@keyframes pulseMic {
+    0% { box-shadow:0 0 0 0 rgba(239,68,68,.5); }
+    70% { box-shadow:0 0 0 14px rgba(239,68,68,0); }
+    100% { box-shadow:0 0 0 0 rgba(239,68,68,0); }
+}
+
+.scan-line {
+    position:absolute;
+    left:0;
+    right:0;
+    height:2px;
+    background:#22c55e;
+    box-shadow:0 0 12px #22c55e;
+    animation:scan 2s infinite;
+}
+
+@keyframes scan {
+    0% {top:0;}
+    50% {top:100%;}
+    100% {top:0;}
+}
+
+.toast {
+    position:fixed;
+    bottom:90px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:100;
+    min-width:260px;
+    max-width:90%;
+}
+
+</style>
+</head>
+
+<body class="bg-slate-200 min-h-screen flex items-center justify-center">
+
+<div class="w-full max-w-md bg-slate-50
+            min-h-screen sm:min-h-[844px]
+            sm:max-h-[900px]
+            sm:rounded-[35px]
+            shadow-2xl overflow-hidden
+            flex flex-col relative">
+
+<!-- ================================================= -->
+<!-- STATUS BAR -->
+<!-- ================================================= -->
+
+<div class="bg-blue-950 text-white px-5 py-3
+            flex justify-between items-center text-xs">
+
+    <span id="current-time">10:30 น.</span>
+
+    <div class="flex items-center gap-3">
+        <span>5G</span>
+        <i class="fa-solid fa-wifi"></i>
+        <i class="fa-solid fa-battery-full"></i>
+    </div>
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- HEADER -->
+<!-- ================================================= -->
+
+<div class="bg-blue-950 text-white px-5 pb-5 rounded-b-[25px]">
+
+    <div class="flex items-center gap-3">
+
+        <div class="w-12 h-12 rounded-full
+                    bg-white text-blue-900
+                    flex items-center justify-center text-xl">
+
+            <i class="fa-solid fa-store"></i>
+
+        </div>
+
+        <div class="flex-1">
+
+            <h1 class="font-bold text-lg">
+                สวัสดี, คุณประสงค์
+            </h1>
+
+            <p class="text-xs text-blue-200">
+                ร้าน ๙หน้าฮาร์ดแวร์
+                <span class="bg-blue-800 px-2 py-1
+                             rounded-full ml-1">
+                    ผู้ดูแลระบบ
+                </span>
+            </p>
+
+        </div>
+
+        <button onclick="showNotification('ระบบพร้อมใช้งาน')" 
+                class="w-9 h-9 rounded-full bg-blue-900">
+            <i class="fa-regular fa-bell"></i>
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- MAIN -->
+<!-- ================================================= -->
+
+<div class="flex-1 overflow-y-auto p-4 pb-24">
+
+
+<!-- ================================================= -->
+<!-- HOME -->
+<!-- ================================================= -->
+
+<section id="page-home" class="space-y-4">
+
+    <!-- QUICK ACTION -->
+
+    <div class="grid grid-cols-2 gap-3">
+
+        <button onclick="openModal('stock-in')"
+        class="gradient-blue text-white p-4 rounded-2xl text-left">
+
+            <i class="fa-solid fa-box-archive text-xl"></i>
+
+            <div class="font-bold text-sm mt-2">
+                รับสินค้าเข้า
+            </div>
+
+            <div class="text-[10px] text-blue-100">
+                Stock In
+            </div>
+
+        </button>
+
+
+        <button onclick="openModal('stock-out')"
+        class="bg-sky-500 text-white p-4 rounded-2xl text-left">
+
+            <i class="fa-solid fa-cart-shopping text-xl"></i>
+
+            <div class="font-bold text-sm mt-2">
+                ขาย / ตัดสต๊อก
+            </div>
+
+            <div class="text-[10px]">
+                Stock Out
+            </div>
+
+        </button>
+
+
+        <button onclick="switchTab('stock')"
+        class="bg-indigo-600 text-white p-4 rounded-2xl text-left">
+
+            <i class="fa-solid fa-boxes-stacked text-xl"></i>
+
+            <div class="font-bold text-sm mt-2">
+                เช็กสต๊อก
+            </div>
+
+            <div class="text-[10px]">
+                Search & Check
+            </div>
+
+        </button>
+
+
+        <button onclick="openModal('add-product')"
+        class="bg-emerald-600 text-white p-4 rounded-2xl text-left">
+
+            <i class="fa-solid fa-circle-plus text-xl"></i>
+
+            <div class="font-bold text-sm mt-2">
+                เพิ่มสินค้าใหม่
+            </div>
+
+            <div class="text-[10px]">
+                Add Product
+            </div>
+
+        </button>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- UNIQUE FEATURES -->
+    <!-- ================================================= -->
+
+    <div>
+
+        <div class="flex justify-between items-center mb-2">
+
+            <div class="font-bold text-slate-800">
+                🚀 Smart Hardware Features
+            </div>
+
+            <span class="badge bg-blue-100 text-blue-700">
+                NEW
+            </span>
+
+        </div>
+
+
+        <div class="grid grid-cols-2 gap-3">
+
+
+            <!-- BLUEPRINT -->
+
+            <button onclick="switchTab('blueprint')"
+            class="feature-card gradient-purple text-white p-4 text-left">
+
+                <div class="w-10 h-10 bg-white/20 rounded-xl
+                            flex items-center justify-center mb-3">
+
+                    <i class="fa-solid fa-compass-drafting text-lg"></i>
+
+                </div>
+
+                <div class="font-bold text-sm">
+                    Blueprint-to-Bill
+                </div>
+
+                <div class="text-[10px] text-purple-100 mt-1">
+                    แปลน → BOM → ใบเสนอราคา
+                </div>
+
+                <div class="mt-3 text-[9px] bg-white/15
+                            rounded-full px-2 py-1 inline-block">
+                    AI MATERIAL AI
+                </div>
+
+            </button>
+
+
+            <!-- VOICE -->
+
+            <button onclick="switchTab('voice')"
+            class="feature-card gradient-orange text-white p-4 text-left">
+
+                <div class="w-10 h-10 bg-white/20 rounded-xl
+                            flex items-center justify-center mb-3">
+
+                    <i class="fa-solid fa-microphone text-lg"></i>
+
+                </div>
+
+                <div class="font-bold text-sm">
+                    Voice Stock AI
+                </div>
+
+                <div class="text-[10px] text-orange-100 mt-1">
+                    พูดแทนการพิมพ์
+                </div>
+
+                <div class="mt-3 text-[9px] bg-white/15
+                            rounded-full px-2 py-1 inline-block">
+                    HANDS FREE
+                </div>
+
+            </button>
+
+
+            <!-- QUICK CALCULATOR -->
+
+            <button onclick="switchTab('calculator')"
+            class="feature-card bg-cyan-600 text-white p-4 text-left">
+
+                <div class="w-10 h-10 bg-white/20 rounded-xl
+                            flex items-center justify-center mb-3">
+
+                    <i class="fa-solid fa-calculator text-lg"></i>
+
+                </div>
+
+                <div class="font-bold text-sm">
+                    Quick Calculator
+                </div>
+
+                <div class="text-[10px] text-cyan-100 mt-1">
+                    พื้นที่จริง → ปูน → ทราย → กระเบื้อง
+                </div>
+
+                <div class="mt-3 text-[9px] bg-white/15
+                            rounded-full px-2 py-1 inline-block">
+                    MATERIAL CALCULATOR
+                </div>
+
+            </button>
+
+
+            <!-- TRUCK -->
+
+            <button onclick="switchTab('truck')"
+            class="feature-card bg-slate-800 text-white p-4 text-left">
+
+                <div class="w-10 h-10 bg-white/10 rounded-xl
+                            flex items-center justify-center mb-3">
+
+                    <i class="fa-solid fa-truck text-lg"></i>
+
+                </div>
+
+                <div class="font-bold text-sm">
+                    Truck Tetris
+                </div>
+
+                <div class="text-[10px] text-slate-300 mt-1">
+                    จัดของขึ้นรถอัจฉริยะ
+                </div>
+
+                <div class="mt-3 text-[9px] bg-white/10
+                            rounded-full px-2 py-1 inline-block">
+                    LOAD OPTIMIZER
+                </div>
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- SMART ADVISOR -->
+
+    <div class="bg-gradient-to-r from-indigo-600 to-blue-600
+                text-white rounded-2xl p-4">
+
+        <div class="flex items-center gap-2 mb-3">
+
+            <i class="fa-solid fa-robot text-xl"></i>
+
+            <div>
+
+                <div class="font-bold">
+                    Smart Stock Advisor
+                </div>
+
+                <div class="text-[10px] text-blue-100">
+                    ระบบช่วยแนะนำการจัดการสต๊อก
+                </div>
+
+            </div>
+
+        </div>
+
+        <div id="smart-advisor"></div>
+
+    </div>
+
+
+    <!-- LOW STOCK -->
+
+    <div class="bg-amber-50 border border-amber-200
+                rounded-2xl p-4">
+
+        <div class="flex items-center gap-2
+                    text-amber-700 font-bold
+                    text-sm mb-3">
+
+            <i class="fa-solid fa-triangle-exclamation"></i>
+
+            สินค้าใกล้หมด
+        </div>
+
+        <div id="home-low-stock-list"
+             class="space-y-2">
+        </div>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="grid grid-cols-2 gap-3">
+
+        <div class="card p-4">
+
+            <div class="text-xs text-slate-500">
+                มูลค่าสต๊อกรวม
+            </div>
+
+            <div id="home-total-value"
+                 class="text-xl font-bold text-blue-900 mt-1">
+                0 บาท
+            </div>
+
+        </div>
+
+        <div class="card p-4">
+
+            <div class="text-xs text-slate-500">
+                สินค้าทั้งหมด
+            </div>
+
+            <div id="home-total-items"
+                 class="text-xl font-bold text-blue-900 mt-1">
+                0 รายการ
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- REVENUE -->
+
+    <div onclick="switchTab('revenue')"
+         class="bg-green-50 border border-green-200
+                rounded-2xl p-4 cursor-pointer">
+
+        <div class="flex justify-between items-center">
+
+            <div>
+
+                <div class="text-xs text-green-700">
+                    💰 รายได้วันนี้
+                </div>
+
+                <div id="home-today-revenue"
+                     class="text-2xl font-bold text-green-700">
+                    0 บาท
+                </div>
+
+            </div>
+
+            <div class="w-10 h-10 rounded-full
+                        bg-green-100 text-green-600
+                        flex items-center justify-center">
+
+                <i class="fa-solid fa-sack-dollar"></i>
+
+            </div>
+
+        </div>
+
+        <div class="text-[10px] text-green-600 mt-2">
+            กดเพื่อดูรายได้ย้อนหลัง →
+        </div>
+
+    </div>
+
+
+    <!-- RECENT -->
+
+    <div class="card p-4">
+
+        <div class="flex justify-between mb-3">
+
+            <div class="font-bold">
+                รายการเคลื่อนไหวล่าสุด
+            </div>
+
+            <button onclick="switchTab('history')"
+                    class="text-xs text-blue-600">
+                ดูทั้งหมด →
+            </button>
+
+        </div>
+
+        <div id="home-recent-transactions"></div>
+
+    </div>
+
+
+    <!-- ORDER -->
+
+    <div class="card p-4">
+
+        <div class="flex justify-between mb-3">
+
+            <div class="font-bold">
+                🛒 รายการที่ควรสั่งซื้อ
+            </div>
+
+            <button onclick="createOrderList()"
+                    class="text-xs text-blue-600">
+                สร้างรายการ
+            </button>
+
+        </div>
+
+        <div id="order-list"></div>
+
+    </div>
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- STOCK -->
+<!-- ================================================= -->
+
+<section id="page-stock"
+         class="hidden space-y-3">
+
+    <div class="flex justify-between items-center">
+
+        <h2 class="font-bold">
+            📦 คลังสินค้าทั้งหมด
+        </h2>
+
+        <button onclick="openModal('add-product')"
+                class="bg-blue-900 text-white
+                       px-3 py-2 rounded-xl text-xs">
+            + เพิ่มสินค้า
+        </button>
+
+    </div>
+
+
+    <div class="flex gap-2">
+
+        <div class="relative flex-1">
+
+            <i class="fa-solid fa-magnifying-glass
+                      absolute left-3 top-3
+                      text-slate-400 text-xs">
+            </i>
+
+            <input id="stock-search"
+                   oninput="renderStockPage()"
+                   placeholder="ค้นหาสินค้า..."
+                   class="input pl-8">
+
+        </div>
+
+        <button onclick="demoBarcodeScan()"
+                class="bg-slate-800 text-white
+                       px-4 rounded-xl">
+
+            <i class="fa-solid fa-barcode"></i>
+
+        </button>
+
+    </div>
+
+    <div id="stock-items-container"
+         class="space-y-2">
+    </div>
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- BLUEPRINT PAGE -->
+<!-- ================================================= -->
+
+<section id="page-blueprint"
+         class="hidden space-y-4">
+
+    <div class="flex items-center gap-2">
+
+        <button onclick="switchTab('home')"
+                class="w-9 h-9 bg-white rounded-xl">
+            <i class="fa-solid fa-arrow-left"></i>
+        </button>
+
+        <div>
+            <h2 class="font-bold">
+                🤖 Blueprint-to-Bill AI
+            </h2>
+
+            <p class="text-[10px] text-slate-500">
+                แปลงแบบแปลนเป็นรายการวัสดุ
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="bg-gradient-to-r
+                from-purple-700 to-indigo-700
+                text-white rounded-2xl p-4">
+
+        <div class="flex gap-3">
+
+            <div class="w-11 h-11 bg-white/20 rounded-xl
+                        flex items-center justify-center">
+
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+
+            </div>
+
+            <div>
+
+                <div class="font-bold">
+                    AI Construction Vision
+                </div>
+
+                <div class="text-[10px] text-purple-100">
+                    ตรวจจับวัสดุ + คำนวณ BOM
+                    + จับคู่กับสินค้าหน้าร้าน
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- UPLOAD -->
+
+    <label class="drop-zone block">
+
+        <input id="blueprint-file"
+               type="file"
+               accept="image/*"
+               class="hidden"
+               onchange="previewBlueprint(event)">
+
+        <div id="blueprint-upload-icon"
+             class="w-14 h-14 mx-auto
+                    rounded-full bg-blue-100
+                    text-blue-600
+                    flex items-center justify-center
+                    text-2xl mb-3">
+
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+
+        </div>
+
+        <div class="font-bold text-sm">
+            อัปโหลดแบบแปลน
+        </div>
+
+        <div class="text-[10px] text-slate-500 mt-1">
+            JPG / PNG / ถ่ายรูปจากมือถือ
+        </div>
+
+        <div class="text-[10px] text-blue-600 mt-3">
+            แตะเพื่อเลือกรูป
+        </div>
+
+    </label>
+
+
+    <div id="blueprint-preview"
+         class="hidden blueprint-preview">
+
+        <img id="blueprint-image"
+             class="w-full h-full object-contain">
+
+        <div class="scan-line"></div>
+
+        <div class="absolute bottom-3 left-3
+                    bg-black/60 text-white
+                    rounded-full px-3 py-1
+                    text-[10px]">
+
+            AI Vision Scanning...
+
+        </div>
+
+    </div>
+
+
+    <button onclick="analyzeBlueprint()"
+            id="blueprint-analyze-btn"
+            class="w-full gradient-purple
+                   text-white py-3 rounded-xl
+                   font-bold text-sm">
+
+        <i class="fa-solid fa-brain mr-2"></i>
+        วิเคราะห์แบบแปลนด้วย AI
+    </button>
+
+
+    <!-- SCALE -->
+
+    <div class="card p-4">
+
+        <div class="flex justify-between items-center mb-3">
+
+            <div class="font-bold text-sm">
+                📏 ปรับสเกล
+            </div>
+
+            <span class="badge bg-blue-100 text-blue-700">
+                Optional
+            </span>
+
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+
+            <input id="scale-length"
+                   type="number"
+                   value="1"
+                   class="input"
+                   placeholder="ระยะบนแบบ">
+
+            <select id="scale-unit"
+                    class="input">
+
+                <option value="m">เมตร</option>
+                <option value="cm">เซนติเมตร</option>
+                <option value="ft">ฟุต</option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+
+    <!-- BOM -->
+
+    <div id="blueprint-result"
+         class="hidden space-y-3">
+
+        <div class="flex justify-between items-center">
+
+            <div class="font-bold">
+                📋 AI Generated BOM
+            </div>
+
+            <span class="badge bg-green-100 text-green-700">
+                AI READY
+            </span>
+
+        </div>
+
+        <div id="bom-list"
+             class="space-y-2">
+        </div>
+
+
+        <div class="card p-4 bg-slate-900 text-white">
+
+            <div class="text-xs text-slate-300">
+                ราคาวัสดุโดยประมาณ
+            </div>
+
+            <div id="bom-total"
+                 class="text-2xl font-bold mt-1">
+                0 บาท
+            </div>
+
+            <div class="text-[10px] text-slate-400 mt-1">
+                * ราคาจากสินค้าภายในสต๊อก
+            </div>
+
+        </div>
+
+
+        <div class="grid grid-cols-2 gap-2">
+
+            <button onclick="generateQuotation()"
+                    class="bg-blue-600 text-white
+                           rounded-xl py-3 text-xs font-bold">
+
+                <i class="fa-solid fa-file-invoice mr-1"></i>
+                สร้างใบเสนอราคา
+
+            </button>
+
+            <button onclick="addBOMToCart()"
+                    class="bg-emerald-600 text-white
+                           rounded-xl py-3 text-xs font-bold">
+
+                <i class="fa-solid fa-cart-plus mr-1"></i>
+                เพิ่มเข้าบิล
+
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- QUICK CALCULATOR WIZARD -->
+<!-- ================================================= -->
+
+<section id="page-calculator"
+         class="hidden space-y-4">
+
+    <div class="flex items-center gap-2">
+
+        <button onclick="switchTab('home')"
+                class="w-9 h-9 bg-white rounded-xl">
+            <i class="fa-solid fa-arrow-left"></i>
+        </button>
+
+        <div>
+            <h2 class="font-bold">
+                🧮 Quick Calculator Wizard
+            </h2>
+
+            <p class="text-[10px] text-slate-500">
+                คำนวณวัสดุจากพื้นที่จริง แล้วเพิ่มเข้าบิลได้ทันที
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- STEP 1: AREA -->
+
+    <div class="card p-4">
+
+        <div class="flex justify-between items-center mb-3">
+            <div>
+                <div class="font-bold text-sm">
+                    1. กรอกพื้นที่หน้างาน
+                </div>
+                <div class="text-[9px] text-slate-500">
+                    ตัวอย่าง 4 × 6 เมตร หนา 10 เซนติเมตร
+                </div>
+            </div>
+
+            <span class="badge bg-cyan-100 text-cyan-700">
+                STEP 1
+            </span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+
+            <div>
+                <label class="text-[10px] text-slate-500">
+                    กว้าง (เมตร)
+                </label>
+                <input id="calc-width"
+                       type="number"
+                       min="0"
+                       step="0.01"
+                       value="4"
+                       oninput="calculateMaterials()"
+                       class="input mt-1">
+            </div>
+
+            <div>
+                <label class="text-[10px] text-slate-500">
+                    ยาว (เมตร)
+                </label>
+                <input id="calc-length"
+                       type="number"
+                       min="0"
+                       step="0.01"
+                       value="6"
+                       oninput="calculateMaterials()"
+                       class="input mt-1">
+            </div>
+
+            <div>
+                <label class="text-[10px] text-slate-500">
+                    ความหนา (เซนติเมตร)
+                </label>
+                <input id="calc-thickness"
+                       type="number"
+                       min="0"
+                       step="0.1"
+                       value="10"
+                       oninput="calculateMaterials()"
+                       class="input mt-1">
+            </div>
+
+            <div>
+                <label class="text-[10px] text-slate-500">
+                    เผื่อกระเบื้อง (%)
+                </label>
+                <input id="calc-waste"
+                       type="number"
+                       min="0"
+                       max="30"
+                       step="1"
+                       value="5"
+                       oninput="calculateMaterials()"
+                       class="input mt-1">
+            </div>
+
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 mt-3">
+
+            <div class="stat-box">
+                <div class="text-[9px] text-slate-500">
+                    พื้นที่
+                </div>
+                <b id="calc-area" class="text-sm">
+                    24.00 m²
+                </b>
+            </div>
+
+            <div class="stat-box">
+                <div class="text-[9px] text-slate-500">
+                    ปริมาตรคอนกรีต
+                </div>
+                <b id="calc-volume" class="text-sm">
+                    2.40 m³
+                </b>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- STEP 2: MATERIAL RESULT -->
+
+    <div class="card p-4">
+
+        <div class="flex justify-between items-center mb-3">
+
+            <div>
+                <div class="font-bold text-sm">
+                    2. ปริมาณวัสดุที่แนะนำ
+                </div>
+                <div class="text-[9px] text-slate-500">
+                    ระบบใช้ค่าประมาณเบื้องต้นเพื่อช่วยคุยกับลูกค้า
+                </div>
+            </div>
+
+            <span class="badge bg-green-100 text-green-700">
+                AUTO
+            </span>
+
+        </div>
+
+        <div id="calculator-results"
+             class="space-y-2">
+        </div>
+
+        <div class="bg-amber-50 border border-amber-200
+                    rounded-xl p-3 mt-3 text-[9px] text-amber-800">
+            ⚠️ ผลลัพธ์เป็นค่าประมาณเบื้องต้น ไม่ใช่แบบคำนวณโครงสร้าง
+            ควรตรวจสอบอัตราส่วนผสมและสเปกหน้างานก่อนสั่งซื้อจริง
+        </div>
+
+    </div>
+
+
+    <!-- STEP 3: CART -->
+
+    <div class="card p-4">
+
+        <div class="flex justify-between items-center mb-3">
+            <div>
+                <div class="font-bold text-sm">
+                    3. จัดรายการขาย
+                </div>
+                <div class="text-[9px] text-slate-500">
+                    กดครั้งเดียวเพื่อเพิ่มวัสดุที่คำนวณได้เข้าบิล
+                </div>
+            </div>
+
+            <span id="calculator-cart-count"
+                  class="badge bg-blue-100 text-blue-700">
+                0 รายการ
+            </span>
+        </div>
+
+        <button onclick="addCalculatorToCart()"
+                class="w-full bg-emerald-600 text-white
+                       py-3 rounded-xl font-bold text-sm">
+
+            <i class="fa-solid fa-cart-plus mr-1"></i>
+            เพิ่มวัสดุทั้งหมดเข้าบิล
+        </button>
+
+        <button onclick="openCalculatorSale()"
+                class="w-full bg-blue-600 text-white
+                       py-3 rounded-xl font-bold text-sm mt-2">
+
+            <i class="fa-solid fa-file-invoice-dollar mr-1"></i>
+            เปิดรายการเพื่อขาย / ตัดสต๊อก
+        </button>
+
+    </div>
+
+
+    <!-- CUSTOMER SUMMARY -->
+
+    <div class="bg-gradient-to-r from-cyan-600 to-blue-600
+                text-white rounded-2xl p-4">
+
+        <div class="flex items-center gap-2 mb-2">
+            <i class="fa-solid fa-receipt"></i>
+            <div class="font-bold text-sm">
+                สรุปสำหรับลูกค้า
+            </div>
+        </div>
+
+        <div id="calculator-summary"
+             class="text-xs">
+            กรอกพื้นที่เพื่อดูรายการวัสดุ
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- VOICE STOCK -->
+<!-- ================================================= -->
+
+<section id="page-voice"
+         class="hidden space-y-4">
+
+    <div class="flex items-center gap-2">
+
+        <button onclick="switchTab('home')"
+                class="w-9 h-9 bg-white rounded-xl">
+            <i class="fa-solid fa-arrow-left"></i>
+        </button>
+
+        <div>
+
+            <h2 class="font-bold">
+                🎙️ Voice-Powered Warehouse Audit
+            </h2>
+
+            <p class="text-[10px] text-slate-500">
+                ตรวจสต๊อกด้วยเสียง ไม่ต้องพิมพ์
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="gradient-orange
+                text-white rounded-2xl p-5 text-center">
+
+        <div class="text-sm font-bold">
+            Voice-to-Stock AI
+        </div>
+
+        <div class="text-[10px] text-orange-100 mt-1">
+            พูดรายการสินค้าและจำนวนที่พบ
+        </div>
+
+
+        <button id="voice-button"
+                onclick="startVoiceAudit()"
+                class="w-20 h-20 rounded-full
+                       bg-white text-orange-600
+                       text-3xl my-5">
+
+            <i class="fa-solid fa-microphone"></i>
+
+        </button>
+
+
+        <div id="voice-status"
+             class="text-xs">
+            กดไมค์เพื่อเริ่มตรวจ
+        </div>
+
+    </div>
+
+
+    <div class="card p-4">
+
+        <div class="flex justify-between">
+
+            <div class="font-bold text-sm">
+                🧠 ตัวอย่างคำสั่ง
+            </div>
+
+            <span class="badge bg-orange-100
+                         text-orange-700">
+                NLP
+            </span>
+
+        </div>
+
+        <div class="space-y-2 mt-3">
+
+            <button onclick="useVoiceDemo(1)"
+                    class="w-full text-left
+                           bg-slate-50 p-3 rounded-xl
+                           text-xs">
+
+                “น็อตเบอร์ 4 นิ้ว เหลือ 3 กล่องครึ่ง”
+
+            </button>
+
+            <button onclick="useVoiceDemo(2)"
+                    class="w-full text-left
+                           bg-slate-50 p-3 rounded-xl
+                           text-xs">
+
+                “เทปพันเกลียว 12 ม้วน”
+
+            </button>
+
+            <button onclick="useVoiceDemo(3)"
+                    class="w-full text-left
+                           bg-slate-50 p-3 rounded-xl
+                           text-xs">
+
+                “ปูนซีเมนต์เหลือ 18 ถุง”
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="card p-4">
+
+        <div class="flex justify-between mb-3">
+
+            <div class="font-bold text-sm">
+                📋 รายการตรวจพบ
+            </div>
+
+            <span id="voice-count"
+                  class="badge bg-green-100
+                         text-green-700">
+                0 รายการ
+            </span>
+
+        </div>
+
+        <div id="voice-results"
+             class="space-y-2">
+
+            <div class="text-xs text-slate-400 text-center py-4">
+                ยังไม่มีข้อมูล
+            </div>
+
+        </div>
+
+        <button onclick="applyVoiceStock()"
+                class="w-full bg-slate-900
+                       text-white py-3 rounded-xl
+                       mt-3 text-xs font-bold">
+
+            <i class="fa-solid fa-check mr-1"></i>
+            ยืนยันอัปเดตสต๊อกทั้งหมด
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- TRUCK TETRIS -->
+<!-- ================================================= -->
+
+<section id="page-truck"
+         class="hidden space-y-4">
+
+    <div class="flex items-center gap-2">
+
+        <button onclick="switchTab('home')"
+                class="w-9 h-9 bg-white rounded-xl">
+            <i class="fa-solid fa-arrow-left"></i>
+        </button>
+
+        <div>
+
+            <h2 class="font-bold">
+                🚚 Truck Tetris Optimizer
+            </h2>
+
+            <p class="text-[10px] text-slate-500">
+                คำนวณน้ำหนัก + จัดวางของบนรถ
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- VEHICLE -->
+
+    <div class="card p-4">
+
+        <div class="font-bold text-sm mb-3">
+            🚛 เลือกรถ
+        </div>
+
+        <select id="truck-type"
+                onchange="calculateTruck()"
+                class="input">
+
+            <option value="1000">
+                รถกระบะ - 1,000 kg
+            </option>
+
+            <option value="1500">
+                รถกระบะเสริมคอก - 1,500 kg
+            </option>
+
+            <option value="3000">
+                รถ 4 ล้อใหญ่ - 3,000 kg
+            </option>
+
+            <option value="6000">
+                รถ 6 ล้อ - 6,000 kg
+            </option>
+
+            <option value="10000">
+                รถ 10 ล้อ - 10,000 kg
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <!-- LOAD ITEMS -->
+
+    <div class="card p-4">
+
+        <div class="font-bold text-sm mb-3">
+            📦 รายการสินค้าที่จะขึ้นรถ
+        </div>
+
+
+        <div class="space-y-2">
+
+            <label class="flex justify-between
+                          items-center bg-slate-50
+                          p-3 rounded-xl">
+
+                <div>
+
+                    <div class="text-xs font-bold">
+                        ปูนซีเมนต์
+                    </div>
+
+                    <div class="text-[9px] text-slate-500">
+                        50 kg / ถุง
+                    </div>
+
+                </div>
+
+                <input type="number"
+                       id="truck-cement"
+                       value="10"
+                       min="0"
+                       onchange="calculateTruck()"
+                       class="w-20 input">
+
+            </label>
+
+
+            <label class="flex justify-between
+                          items-center bg-slate-50
+                          p-3 rounded-xl">
+
+                <div>
+
+                    <div class="text-xs font-bold">
+                        เหล็กเส้น 6 เมตร
+                    </div>
+
+                    <div class="text-[9px] text-slate-500">
+                        18 kg / เส้น
+                    </div>
+
+                </div>
+
+                <input type="number"
+                       id="truck-steel"
+                       value="20"
+                       min="0"
+                       onchange="calculateTruck()"
+                       class="w-20 input">
+
+            </label>
+
+
+            <label class="flex justify-between
+                          items-center bg-slate-50
+                          p-3 rounded-xl">
+
+                <div>
+
+                    <div class="text-xs font-bold">
+                        กระเบื้อง
+                    </div>
+
+                    <div class="text-[9px] text-slate-500">
+                        20 kg / กล่อง
+                    </div>
+
+                </div>
+
+                <input type="number"
+                       id="truck-tile"
+                       value="15"
+                       min="0"
+                       onchange="calculateTruck()"
+                       class="w-20 input">
+
+            </label>
+
+
+            <label class="flex justify-between
+                          items-center bg-slate-50
+                          p-3 rounded-xl">
+
+                <div>
+
+                    <div class="text-xs font-bold">
+                        ทราย
+                    </div>
+
+                    <div class="text-[9px] text-slate-500">
+                        25 kg / ถุง
+                    </div>
+
+                </div>
+
+                <input type="number"
+                       id="truck-sand"
+                       value="10"
+                       min="0"
+                       onchange="calculateTruck()"
+                       class="w-20 input">
+
+            </label>
+
+        </div>
+
+    </div>
+
+
+    <!-- WEIGHT RESULT -->
+
+    <div id="truck-result"
+         class="card p-4">
+
+    </div>
+
+
+    <!-- VISUAL -->
+
+    <div class="card p-4">
+
+        <div class="flex justify-between items-center mb-3">
+
+            <div class="font-bold text-sm">
+                🧩 Visual Loading Guide
+            </div>
+
+            <span class="badge bg-blue-100
+                         text-blue-700">
+                AUTO
+            </span>
+
+        </div>
+
+        <div class="truck-bed"
+             id="truck-bed">
+
+            <div class="absolute top-2 left-2
+                        text-[9px] text-slate-500">
+                ด้านหน้ารถ
+            </div>
+
+            <div class="absolute bottom-2 right-2
+                        text-[9px] text-slate-500">
+                ท้ายรถ
+            </div>
+
+        </div>
+
+        <div class="text-[10px] text-slate-500
+                    text-center mt-2">
+
+            ระบบพยายามวางของหนักไว้ใกล้
+            จุดศูนย์กลางของรถ
+
+        </div>
+
+    </div>
+
+
+    <button onclick="showTruckAdvice()"
+            class="w-full bg-blue-600 text-white
+                   rounded-xl py-3 font-bold text-sm">
+
+        <i class="fa-solid fa-shield-halved mr-1"></i>
+        ตรวจความปลอดภัยการบรรทุก
+    </button>
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- HISTORY -->
+<!-- ================================================= -->
+
+<section id="page-history"
+         class="hidden space-y-3">
+
+    <div class="flex justify-between">
+
+        <h2 class="font-bold">
+            📝 ประวัติการทำรายการ
+        </h2>
+
+        <button onclick="clearHistory()"
+                class="text-xs text-red-500">
+            ล้างประวัติ
+        </button>
+
+    </div>
+
+    <div id="history-items-container"
+         class="space-y-2">
+    </div>
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- REVENUE -->
+<!-- ================================================= -->
+
+<section id="page-revenue"
+         class="hidden space-y-3">
+
+    <div class="flex justify-between">
+
+        <h2 class="font-bold">
+            💰 รายได้จากการขาย
+        </h2>
+
+    </div>
+
+    <div class="gradient-green text-white
+                rounded-2xl p-5">
+
+        <div class="text-xs text-green-100">
+            รายได้วันนี้
+        </div>
+
+        <div id="revenue-total"
+             class="text-3xl font-bold">
+            0 บาท
+        </div>
+
+        <div class="text-[10px] text-green-100 mt-2">
+            อัปเดตแบบ Real-time
+        </div>
+
+    </div>
+
+    <div id="revenue-list"
+         class="space-y-2">
+    </div>
+
+</section>
+
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- BOTTOM NAV -->
+<!-- ================================================= -->
+
+<div class="absolute bottom-0 left-0 right-0
+            bg-white border-t border-slate-200
+            px-3 py-2 grid grid-cols-6 z-30">
+
+    <button onclick="switchTab('home')"
+            class="nav-btn active text-slate-500
+                   flex flex-col items-center gap-1 text-[9px]">
+
+        <i class="fa-solid fa-house text-base"></i>
+        หน้าแรก
+
+    </button>
+
+
+    <button onclick="switchTab('stock')"
+            class="nav-btn text-slate-500
+                   flex flex-col items-center gap-1 text-[9px]">
+
+        <i class="fa-solid fa-boxes-stacked text-base"></i>
+        สต๊อก
+
+    </button>
+
+
+    <button onclick="switchTab('blueprint')"
+            class="nav-btn text-slate-500
+                   flex flex-col items-center gap-1 text-[9px]">
+
+        <i class="fa-solid fa-compass-drafting text-base"></i>
+        AI แปลน
+
+    </button>
+
+
+    <button onclick="switchTab('truck')"
+            class="nav-btn text-slate-500
+                   flex flex-col items-center gap-1 text-[9px]">
+
+        <i class="fa-solid fa-truck text-base"></i>
+        รถส่งของ
+
+    </button>
+
+
+    <button onclick="switchTab('calculator')"
+            class="nav-btn text-slate-500
+                   flex flex-col items-center gap-1 text-[9px]">
+
+        <i class="fa-solid fa-calculator text-base"></i>
+        คำนวณ
+
+    </button>
+
+
+    <button onclick="switchTab('voice')"
+            class="nav-btn text-slate-500
+                   flex flex-col items-center gap-1 text-[9px]">
+
+        <i class="fa-solid fa-microphone text-base"></i>
+        Voice
+
+    </button>
+
+</div>
+
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- MODAL -->
+<!-- ================================================= -->
+
+<div id="modal"
+     class="hidden fixed inset-0 modal-bg
+            z-50 flex items-end sm:items-center
+            justify-center p-3">
+
+    <div class="bg-white rounded-[25px]
+                w-full max-w-md max-h-[90vh]
+                overflow-y-auto">
+
+        <div class="p-5">
+
+            <div class="flex justify-between items-center mb-4">
+
+                <div id="modal-title"
+                     class="font-bold text-lg">
+                    Modal
+                </div>
+
+                <button onclick="closeModal()"
+                        class="w-9 h-9 bg-slate-100
+                               rounded-full">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+            </div>
+
+            <div id="modal-body"></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- TOAST -->
+
+<div id="toast"
+     class="toast hidden
+            bg-slate-900 text-white
+            rounded-xl px-4 py-3
+            text-xs shadow-2xl text-center">
+</div>
+
+
+<script>
+
+/* =====================================================
+   DATABASE
+===================================================== */
+
+let products = [
+
+    {
+        id:1,
+        name:"ปูนซีเมนต์ปอร์ตแลนด์",
+        category:"วัสดุก่อสร้าง",
+        barcode:"8850001001",
+        stock:18,
+        min:25,
+        price:145,
+        weight:50
+    },
+
+    {
+        id:2,
+        name:"เหล็กเส้น 6 เมตร",
+        category:"เหล็ก",
+        barcode:"8850001002",
+        stock:120,
+        min:50,
+        price:180,
+        weight:18
+    },
+
+    {
+        id:3,
+        name:"กระเบื้องพื้น 60x60",
+        category:"กระเบื้อง",
+        barcode:"8850001003",
+        stock:12,
+        min:20,
+        price:390,
+        weight:20
+    },
+
+    {
+        id:4,
+        name:"ท่อ PVC 1/2 นิ้ว",
+        category:"ประปา",
+        barcode:"8850001004",
+        stock:35,
+        min:20,
+        price:65,
+        weight:1.5
+    },
+
+    {
+        id:5,
+        name:"ข้องอ PVC 1/2 นิ้ว",
+        category:"ประปา",
+        barcode:"8850001005",
+        stock:48,
+        min:25,
+        price:18,
+        weight:.2
+    },
+
+    {
+        id:6,
+        name:"สายไฟ THW 2.5 sq.mm.",
+        category:"ไฟฟ้า",
+        barcode:"8850001006",
+        stock:7,
+        min:10,
+        price:1250,
+        weight:7
+    },
+
+    {
+        id:7,
+        name:"น็อตเบอร์ 4 นิ้ว",
+        category:"ฮาร์ดแวร์",
+        barcode:"8850001007",
+        stock:8,
+        min:12,
+        price:220,
+        weight:3
+    },
+
+    {
+        id:8,
+        name:"เทปพันเกลียว",
+        category:"ประปา",
+        barcode:"8850001008",
+        stock:22,
+        min:10,
+        price:15,
+        weight:.1
+    },
+
+    {
+        id:9,
+        name:"ทรายก่อสร้าง",
+        category:"วัสดุก่อสร้าง",
+        barcode:"8850001009",
+        stock:25,
+        min:15,
+        price:45,
+        weight:25
+    }
+
+];
+
+
+let history = [];
+
+let revenue = [];
+
+let cart = [];
+
+let bomItems = [];
+
+let voiceResults = [];
+
+
+
+/* =====================================================
+   INIT
+===================================================== */
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+    updateTime();
+
+    setInterval(updateTime,1000);
+
+    renderHome();
+
+    renderStockPage();
+
+    renderHistory();
+
+    renderRevenue();
+
+    calculateTruck();
+    calculateMaterials();
+
+});
+
+
+/* =====================================================
+   TIME
+===================================================== */
+
+function updateTime(){
+
+    const now = new Date();
+
+    document.getElementById("current-time")
+        .textContent =
+        now.toLocaleTimeString("th-TH",{
+            hour:"2-digit",
+            minute:"2-digit"
+        }) + " น.";
+
+}
+
+
+/* =====================================================
+   TAB
+===================================================== */
+
+function switchTab(page){
+
+    document.querySelectorAll("section[id^='page-']")
+        .forEach(el=>{
+            el.classList.add("hidden");
+        });
+
+    const target =
+        document.getElementById("page-"+page);
+
+    if(target){
+        target.classList.remove("hidden");
+    }
+
+    document.querySelectorAll(".nav-btn")
+        .forEach(btn=>{
+            btn.classList.remove("active");
+        });
+
+    if(page==="home") renderHome();
+    if(page==="stock") renderStockPage();
+    if(page==="history") renderHistory();
+    if(page==="revenue") renderRevenue();
+    if(page==="truck") calculateTruck();
+    if(page==="calculator") calculateMaterials();
+
+}
+
+
+/* =====================================================
+   HOME
+===================================================== */
+
+function renderHome(){
+
+    const total =
+        products.reduce(
+            (sum,p)=>sum+(p.stock*p.price),0
+        );
+
+    document.getElementById("home-total-value")
+        .textContent =
+        total.toLocaleString()+" บาท";
+
+
+    document.getElementById("home-total-items")
+        .textContent =
+        products.length+" รายการ";
+
+
+    const today =
+        new Date().toDateString();
+
+    const todayRevenue =
+        revenue
+        .filter(x=>x.date===today)
+        .reduce((s,x)=>s+x.amount,0);
+
+
+    document.getElementById("home-today-revenue")
+        .textContent =
+        todayRevenue.toLocaleString()+" บาท";
+
+
+    const low =
+        products.filter(p=>p.stock<=p.min);
+
+
+    document.getElementById("home-low-stock-list")
+        .innerHTML =
+        low.length
+        ?
+        low.map(p=>`
+
+            <div class="flex justify-between
+                        items-center bg-white
+                        rounded-xl p-3">
+
+                <div>
+
+                    <div class="text-xs font-bold">
+                        ${p.name}
+                    </div>
+
+                    <div class="text-[9px] text-slate-500">
+                        เหลือ ${p.stock} ${p.name.includes("สายไฟ")?"ม้วน":"หน่วย"}
+                    </div>
+
+                </div>
+
+                <span class="badge bg-red-100 text-red-600">
+                    ควรสั่ง ${Math.max(p.min*2-p.stock,1)}
+                </span>
+
+            </div>
+
+        `).join("")
+        :
+        `<div class="text-xs text-slate-500">
+            สต๊อกอยู่ในระดับปกติ
+        </div>`;
+
+
+    const recent =
+        history.slice(-4).reverse();
+
+
+    document.getElementById("home-recent-transactions")
+        .innerHTML =
+        recent.length
+        ?
+        recent.map(h=>`
+
+            <div class="flex justify-between
+                        py-2 border-b border-slate-100">
+
+                <div>
+
+                    <div class="text-xs font-bold">
+                        ${h.product}
+                    </div>
+
+                    <div class="text-[9px] text-slate-500">
+                        ${h.type}
+                    </div>
+
+                </div>
+
+                <div class="text-xs font-bold
+                            ${h.type==="ขาย"?"text-red-500":"text-green-600"}">
+
+                    ${h.type==="ขาย"?"-":"+"}${h.qty}
+
+                </div>
+
+            </div>
+
+        `).join("")
+        :
+        `<div class="text-xs text-slate-400">
+            ยังไม่มีรายการ
+        </div>`;
+
+
+    const advisor =
+        low.length
+        ?
+        `
+        <div class="text-xs">
+            🔥 พบสินค้า ${low.length} รายการ
+            ต่ำกว่าจุดสั่งซื้อ
+        </div>
+
+        <div class="text-[10px] text-blue-100 mt-2">
+            แนะนำให้สร้าง Purchase Order อัตโนมัติ
+        </div>
+        `
+        :
+        `
+        <div class="text-xs">
+            ✨ สต๊อกโดยรวมอยู่ในระดับดี
+        </div>
+
+        <div class="text-[10px] text-blue-100 mt-2">
+            ระบบกำลังเฝ้าดูแนวโน้มการขาย
+        </div>
+        `;
+
+
+    document.getElementById("smart-advisor")
+        .innerHTML=advisor;
+
+
+    createOrderList();
+
+}
+
+
+/* =====================================================
+   ORDER LIST
+===================================================== */
+
+function createOrderList(){
+
+    const low =
+        products.filter(p=>p.stock<=p.min);
+
+
+    document.getElementById("order-list")
+        .innerHTML =
+        low.length
+        ?
+        low.map(p=>`
+
+            <div class="flex justify-between
+                        items-center py-2">
+
+                <div class="flex items-center gap-2">
+
+                    <div class="w-8 h-8 rounded-lg
+                                bg-amber-100 text-amber-600
+                                flex items-center justify-center">
+
+                        <i class="fa-solid fa-box"></i>
+
+                    </div>
+
+                    <div>
+
+                        <div class="text-xs font-bold">
+                            ${p.name}
+                        </div>
+
+                        <div class="text-[9px] text-slate-500">
+                            แนะนำ ${Math.max(p.min*2-p.stock,1)} หน่วย
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <button onclick="orderProduct(${p.id})"
+                        class="text-[10px]
+                               bg-blue-100 text-blue-700
+                               px-2 py-1 rounded-lg">
+
+                    สั่งซื้อ
+
+                </button>
+
+            </div>
+
+        `).join("")
+        :
+        `<div class="text-xs text-slate-400">
+            ไม่มีรายการที่ต้องสั่ง
+        </div>`;
+
+}
+
+
+function orderProduct(id){
+
+    const p =
+        products.find(x=>x.id===id);
+
+    showNotification(
+        `เพิ่ม ${p.name} ลงรายการสั่งซื้อแล้ว`
+    );
+
+}
+
+
+/* =====================================================
+   STOCK
+===================================================== */
+
+function renderStockPage(){
+
+    const q =
+        (document.getElementById("stock-search")?.value||"")
+        .toLowerCase();
+
+
+    const filtered =
+        products.filter(p=>
+            p.name.toLowerCase().includes(q) ||
+            p.barcode.includes(q)
+        );
+
+
+    document.getElementById("stock-items-container")
+        .innerHTML =
+        filtered.map(p=>`
+
+            <div class="card p-4">
+
+                <div class="flex justify-between">
+
+                    <div class="flex gap-3">
+
+                        <div class="w-11 h-11
+                                    rounded-xl bg-blue-50
+                                    text-blue-600
+                                    flex items-center
+                                    justify-center">
+
+                            <i class="fa-solid fa-box"></i>
+
+                        </div>
+
+                        <div>
+
+                            <div class="font-bold text-sm">
+                                ${p.name}
+                            </div>
+
+                            <div class="text-[9px] text-slate-500">
+                                ${p.category} · ${p.barcode}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="text-right">
+
+                        <div class="font-bold
+                            ${p.stock<=p.min?
+                            "text-red-500":
+                            "text-green-600"}">
+
+                            ${p.stock}
+
+                        </div>
+
+                        <div class="text-[9px] text-slate-500">
+                            ราคา ${p.price.toLocaleString()}
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="flex gap-2 mt-3">
+
+                    <button onclick="quickStockIn(${p.id})"
+                            class="flex-1 bg-green-50
+                                   text-green-700
+                                   rounded-xl py-2 text-[10px]">
+
+                        + รับเข้า
+
+                    </button>
+
+                    <button onclick="quickStockOut(${p.id})"
+                            class="flex-1 bg-red-50
+                                   text-red-600
+                                   rounded-xl py-2 text-[10px]">
+
+                        - ขาย
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        `).join("");
+
+}
+
+
+function quickStockIn(id){
+
+    const p=products.find(x=>x.id===id);
+
+    p.stock++;
+
+    history.push({
+        product:p.name,
+        type:"รับเข้า",
+        qty:1
+    });
+
+    renderAll();
+
+    showNotification("รับสินค้าเข้า 1 หน่วยแล้ว");
+
+}
+
+
+function quickStockOut(id){
+
+    const p=products.find(x=>x.id===id);
+
+    if(p.stock<=0){
+        showNotification("สินค้าไม่มีในสต๊อก");
+        return;
+    }
+
+    p.stock--;
+
+    const amount=p.price;
+
+    history.push({
+        product:p.name,
+        type:"ขาย",
+        qty:1
+    });
+
+    revenue.push({
+        amount,
+        date:new Date().toDateString(),
+        product:p.name
+    });
+
+    renderAll();
+
+    showNotification("ตัดสต๊อกและบันทึกยอดขายแล้ว");
+
+}
+
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+function openModal(type){
+
+    document.getElementById("modal")
+        .classList.remove("hidden");
+
+
+    if(type==="add-product"){
+
+        document.getElementById("modal-title")
+            .textContent="เพิ่มสินค้าใหม่";
+
+
+        document.getElementById("modal-body")
+            .innerHTML=`
+
+                <div class="space-y-3">
+
+                    <input id="new-name"
+                           class="input"
+                           placeholder="ชื่อสินค้า">
+
+                    <input id="new-category"
+                           class="input"
+                           placeholder="หมวดหมู่">
+
+                    <input id="new-price"
+                           type="number"
+                           class="input"
+                           placeholder="ราคาขาย">
+
+                    <input id="new-stock"
+                           type="number"
+                           class="input"
+                           placeholder="จำนวนเริ่มต้น">
+
+                    <input id="new-min"
+                           type="number"
+                           class="input"
+                           placeholder="จุดสั่งซื้อขั้นต่ำ">
+
+                    <button onclick="addProduct()"
+                            class="w-full bg-emerald-600
+                                   text-white py-3
+                                   rounded-xl font-bold">
+
+                        เพิ่มสินค้า
+
+                    </button>
+
+                </div>
+
+            `;
+
+    }
+
+
+    if(type==="stock-in"){
+
+        document.getElementById("modal-title")
+            .textContent="📦 รับสินค้าเข้า";
+
+
+        document.getElementById("modal-body")
+            .innerHTML=`
+
+                <div class="space-y-3">
+
+                    <select id="stock-in-product"
+                            class="input">
+
+                        ${products.map(p=>
+                        `<option value="${p.id}">
+                            ${p.name}
+                        </option>`).join("")}
+
+                    </select>
+
+                    <input id="stock-in-qty"
+                           type="number"
+                           value="1"
+                           min="1"
+                           class="input"
+                           placeholder="จำนวน">
+
+                    <button onclick="doStockIn()"
+                            class="w-full bg-blue-600
+                                   text-white py-3
+                                   rounded-xl font-bold">
+
+                        ยืนยันรับสินค้า
+
+                    </button>
+
+                </div>
+
+            `;
+
+    }
+
+
+    if(type==="stock-out"){
+
+        document.getElementById("modal-title")
+            .textContent="🛒 ขาย / ตัดสต๊อก";
+
+
+        document.getElementById("modal-body")
+            .innerHTML=`
+
+                <div class="space-y-3">
+
+                    <select id="stock-out-product"
+                            class="input">
+
+                        ${products.map(p=>
+                        `<option value="${p.id}">
+                            ${p.name} (${p.stock})
+                        </option>`).join("")}
+
+                    </select>
+
+                    <input id="stock-out-qty"
+                           type="number"
+                           value="1"
+                           min="1"
+                           class="input">
+
+                    <button onclick="doStockOut()"
+                            class="w-full bg-sky-500
+                                   text-white py-3
+                                   rounded-xl font-bold">
+
+                        ยืนยันการขาย
+
+                    </button>
+
+                </div>
+
+            `;
+
+    }
+
+}
+
+
+function closeModal(){
+
+    document.getElementById("modal")
+        .classList.add("hidden");
+
+}
+
+
+function addProduct(){
+
+    const name =
+        document.getElementById("new-name").value.trim();
+
+    if(!name){
+        showNotification("กรุณากรอกชื่อสินค้า");
+        return;
+    }
+
+    const p={
+
+        id:Date.now(),
+
+        name,
+
+        category:
+        document.getElementById("new-category").value,
+
+        barcode:String(Date.now()).slice(-10),
+
+        stock:
+        Number(document.getElementById("new-stock").value)||0,
+
+        min:
+        Number(document.getElementById("new-min").value)||10,
+
+        price:
+        Number(document.getElementById("new-price").value)||0,
+
+        weight:1
+
+    };
+
+
+    products.push(p);
+
+    closeModal();
+
+    renderAll();
+
+    showNotification("เพิ่มสินค้าเรียบร้อย");
+
+}
+
+
+function doStockIn(){
+
+    const id=
+        Number(document.getElementById("stock-in-product").value);
+
+    const qty=
+        Number(document.getElementById("stock-in-qty").value)||1;
+
+    const p=products.find(x=>x.id===id);
+
+    p.stock+=qty;
+
+    history.push({
+        product:p.name,
+        type:"รับเข้า",
+        qty
+    });
+
+    closeModal();
+
+    renderAll();
+
+    showNotification(`รับ ${qty} หน่วยแล้ว`);
+
+}
+
+
+function doStockOut(){
+
+    const id=
+        Number(document.getElementById("stock-out-product").value);
+
+    const qty=
+        Number(document.getElementById("stock-out-qty").value)||1;
+
+    const p=products.find(x=>x.id===id);
+
+    if(p.stock<qty){
+
+        showNotification("จำนวนสินค้าไม่เพียงพอ");
+
+        return;
+    }
+
+    p.stock-=qty;
+
+    const amount=p.price*qty;
+
+    history.push({
+        product:p.name,
+        type:"ขาย",
+        qty
+    });
+
+    revenue.push({
+        amount,
+        date:new Date().toDateString(),
+        product:p.name
+    });
+
+    closeModal();
+
+    renderAll();
+
+    showNotification("ขายสินค้าและตัดสต๊อกแล้ว");
+
+}
+
+
+/* =====================================================
+   BLUEPRINT AI
+===================================================== */
+
+function previewBlueprint(event){
+
+    const file=event.target.files[0];
+
+    if(!file) return;
+
+    const reader=new FileReader();
+
+    reader.onload=function(e){
+
+        document.getElementById("blueprint-preview")
+            .classList.remove("hidden");
+
+        document.getElementById("blueprint-image")
+            .src=e.target.result;
+
+    };
+
+    reader.readAsDataURL(file);
+
+}
+
+
+function analyzeBlueprint(){
+
+    const btn=
+        document.getElementById("blueprint-analyze-btn");
+
+    btn.innerHTML=
+        `<i class="fa-solid fa-spinner fa-spin mr-2"></i>
+         AI กำลังวิเคราะห์...`;
+
+    btn.disabled=true;
+
+
+    /*
+       DEMO AI ENGINE
+
+       ในระบบจริง จุดนี้สามารถส่งรูปไปยัง
+       Vision AI / OCR / Blueprint Recognition API
+       ได้ เช่น:
+
+       POST /api/blueprint/analyze
+
+       FormData:
+       blueprint_image
+
+       Response:
+       {
+         materials:[
+            {
+              name:"ท่อ PVC 1/2 นิ้ว",
+              quantity:20
+            }
+         ]
+       }
+    */
+
+
+    setTimeout(()=>{
+
+        bomItems=[
+
+            {
+                productId:4,
+                name:"ท่อ PVC 1/2 นิ้ว",
+                qty:24
+            },
+
+            {
+                productId:5,
+                name:"ข้องอ PVC 1/2 นิ้ว",
+                qty:18
+            },
+
+            {
+                productId:6,
+                name:"สายไฟ THW 2.5 sq.mm.",
+                qty:3
+            },
+
+            {
+                productId:1,
+                name:"ปูนซีเมนต์ปอร์ตแลนด์",
+                qty:15
+            },
+
+            {
+                productId:3,
+                name:"กระเบื้องพื้น 60x60",
+                qty:22
+            }
+
+        ];
+
+
+        renderBOM();
+
+
+        document.getElementById("blueprint-result")
+            .classList.remove("hidden");
+
+
+        btn.innerHTML=
+            `<i class="fa-solid fa-check mr-2"></i>
+             วิเคราะห์เสร็จแล้ว`;
+
+        btn.disabled=false;
+
+
+        showNotification(
+            "AI วิเคราะห์แบบแปลนเสร็จภายใน 3.8 วินาที"
+        );
+
+    },3800);
+
+}
+
+
+function renderBOM(){
+
+    let total=0;
+
+
+    document.getElementById("bom-list")
+        .innerHTML=
+
+        bomItems.map(item=>{
+
+            const p=
+                products.find(x=>x.id===item.productId);
+
+            const subtotal=
+                p.price*item.qty;
+
+            total+=subtotal;
+
+
+            const enough=
+                p.stock>=item.qty;
+
+
+            return `
+
+                <div class="card p-3">
+
+                    <div class="flex justify-between">
+
+                        <div>
+
+                            <div class="text-xs font-bold">
+                                ${item.name}
+                            </div>
+
+                            <div class="text-[9px] text-slate-500">
+                                ${p.price.toLocaleString()} บาท / หน่วย
+                            </div>
+
+                        </div>
+
+                        <div class="text-right">
+
+                            <div class="font-bold text-sm">
+                                × ${item.qty}
+                            </div>
+
+                            <div class="text-[9px]
+                                ${enough?
+                                "text-green-600":
+                                "text-red-500"}">
+
+                                ${enough?
+                                "มีของในสต๊อก":
+                                "สินค้าไม่พอ"}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="flex justify-between
+                                text-xs mt-2 pt-2
+                                border-t border-slate-100">
+
+                        <span>
+                            มูลค่า
+                        </span>
+
+                        <b>
+                            ${subtotal.toLocaleString()} บาท
+                        </b>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }).join("");
+
+
+    document.getElementById("bom-total")
+        .textContent=
+        total.toLocaleString()+" บาท";
+
+}
+
+
+function generateQuotation(){
+
+    if(!bomItems.length){
+        showNotification("ยังไม่มี BOM");
+        return;
+    }
+
+    const total=
+        bomItems.reduce((sum,item)=>{
+
+            const p=
+                products.find(x=>x.id===item.productId);
+
+            return sum+p.price*item.qty;
+
+        },0);
+
+
+    document.getElementById("modal-title")
+        .textContent="📄 ใบเสนอราคา AI";
+
+
+    document.getElementById("modal-body")
+        .innerHTML=`
+
+            <div class="space-y-3">
+
+                <div class="bg-blue-50
+                            rounded-xl p-4">
+
+                    <div class="text-xs text-blue-700">
+                        ใบเสนอราคา
+                    </div>
+
+                    <div class="font-bold">
+                        Q-${Date.now().toString().slice(-6)}
+                    </div>
+
+                </div>
+
+                ${bomItems.map(x=>{
+
+                    const p=
+                        products.find(y=>y.id===x.productId);
+
+                    return `
+
+                        <div class="flex justify-between
+                                    text-xs">
+
+                            <span>
+                                ${x.name} × ${x.qty}
+                            </span>
+
+                            <b>
+                                ${(p.price*x.qty)
+                                .toLocaleString()}
+                            </b>
+
+                        </div>
+
+                    `;
+
+                }).join("")}
+
+                <div class="border-t pt-3
+                            flex justify-between">
+
+                    <b>
+                        รวมทั้งสิ้น
+                    </b>
+
+                    <b class="text-blue-700 text-lg">
+                        ${total.toLocaleString()} บาท
+                    </b>
+
+                </div>
+
+                <button onclick="printQuotation()"
+                        class="w-full bg-blue-600
+                               text-white py-3
+                               rounded-xl font-bold">
+
+                    <i class="fa-solid fa-print mr-1"></i>
+                    พิมพ์ / บันทึก PDF
+
+                </button>
+
+            </div>
+
+        `;
+
+    document.getElementById("modal")
+        .classList.remove("hidden");
+
+}
+
+
+function printQuotation(){
+
+    showNotification(
+        "เตรียมเอกสารใบเสนอราคาแล้ว"
+    );
+
+}
+
+
+function addBOMToCart(){
+
+    bomItems.forEach(item=>{
+
+        const existing=
+            cart.find(x=>x.productId===item.productId);
+
+        if(existing){
+            existing.qty+=item.qty;
+        }else{
+
+            cart.push({
+                productId:item.productId,
+                qty:item.qty
+            });
+
+        }
+
+    });
+
+    showNotification(
+        `เพิ่มวัสดุ ${bomItems.length} รายการเข้าบิลแล้ว`
+    );
+
+}
+
+
+/* =====================================================
+   VOICE STOCK
+===================================================== */
+
+function startVoiceAudit(){
+
+    const button=
+        document.getElementById("voice-button");
+
+
+    const status=
+        document.getElementById("voice-status");
+
+
+    if(!("webkitSpeechRecognition" in window ||
+         "SpeechRecognition" in window)){
+
+        showNotification(
+            "Browser นี้ไม่รองรับ Speech Recognition"
+        );
+
+        return;
+
+    }
+
+
+    const SpeechRecognition=
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+
+    const recognition=
+        new SpeechRecognition();
+
+
+    recognition.lang="th-TH";
+
+    recognition.continuous=false;
+
+    recognition.interimResults=false;
+
+
+    button.classList.add("mic-pulse");
+
+    status.textContent=
+        "🎙️ กำลังฟัง... พูดรายการสินค้าได้เลย";
+
+
+    recognition.onresult=function(event){
+
+        const text=
+            event.results[0][0].transcript;
+
+
+        status.textContent=
+            "ได้ยิน: "+text;
+
+
+        parseVoiceCommand(text);
+
+    };
+
+
+    recognition.onerror=function(){
+
+        status.textContent=
+            "ไม่สามารถรับเสียงได้ ลองอีกครั้ง";
+
+        button.classList.remove("mic-pulse");
+
+    };
+
+
+    recognition.onend=function(){
+
+        button.classList.remove("mic-pulse");
+
+    };
+
+
+    recognition.start();
+
+}
+
+
+function useVoiceDemo(type){
+
+    if(type===1){
+
+        parseVoiceCommand(
+            "น็อตเบอร์ 4 นิ้ว เหลือ 3 กล่องครึ่ง"
+        );
+
+    }
+
+    if(type===2){
+
+        parseVoiceCommand(
+            "เทปพันเกลียว 12 ม้วน"
+        );
+
+    }
+
+    if(type===3){
+
+        parseVoiceCommand(
+            "ปูนซีเมนต์เหลือ 18 ถุง"
+        );
+
+    }
+
+}
+
+
+function parseVoiceCommand(text){
+
+    let product=null;
+
+    let qty=0;
+
+
+    if(text.includes("น็อต")){
+
+        product=
+            products.find(p=>p.name.includes("น็อต"));
+
+        qty=3.5;
+
+    }
+
+    else if(text.includes("เทปพันเกลียว")){
+
+        product=
+            products.find(p=>p.name.includes("เทปพันเกลียว"));
+
+        qty=
+            parseNumberFromThai(text)||12;
+
+    }
+
+    else if(text.includes("ปูน")){
+
+        product=
+            products.find(p=>p.name.includes("ปูนซีเมนต์"));
+
+        qty=
+            parseNumberFromThai(text)||18;
+
+    }
+
+
+    if(!product){
+
+        showNotification(
+            "AI ยังจับคู่สินค้าไม่พบ"
+        );
+
+        return;
+    }
+
+
+    const existing=
+        voiceResults.find(
+            x=>x.productId===product.id
+        );
+
+
+    if(existing){
+
+        existing.qty=qty;
+
+    }else{
+
+        voiceResults.push({
+
+            productId:product.id,
+
+            name:product.name,
+
+            qty,
+
+            originalText:text
+
+        });
+
+    }
+
+
+    renderVoiceResults();
+
+    showNotification(
+        `AI ตรวจพบ ${product.name} = ${qty}`
+    );
+
+}
+
+
+function parseNumberFromThai(text){
+
+    const m=
+        text.match(/\d+(?:\.\d+)?/);
+
+    return m?Number(m[0]):null;
+
+}
+
+
+function renderVoiceResults(){
+
+    document.getElementById("voice-count")
+        .textContent=
+        voiceResults.length+" รายการ";
+
+
+    document.getElementById("voice-results")
+        .innerHTML=
+
+        voiceResults.length
+
+        ?
+
+        voiceResults.map((x,i)=>`
+
+            <div class="bg-slate-50
+                        rounded-xl p-3">
+
+                <div class="flex justify-between">
+
+                    <div>
+
+                        <div class="text-xs font-bold">
+                            ${x.name}
+                        </div>
+
+                        <div class="text-[9px] text-slate-500">
+                            "${x.originalText}"
+                        </div>
+
+                    </div>
+
+                    <div class="text-right">
+
+                        <div class="font-bold
+                                    text-orange-600">
+
+                            ${x.qty}
+
+                        </div>
+
+                        <div class="text-[9px]">
+                            หน่วย
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        `).join("")
+
+        :
+
+        `<div class="text-xs text-slate-400
+                    text-center py-4">
+            ยังไม่มีข้อมูล
+        </div>`;
+
+}
+
+
+function applyVoiceStock(){
+
+    if(!voiceResults.length){
+
+        showNotification("ยังไม่มีรายการตรวจนับ");
+
+        return;
+    }
+
+
+    voiceResults.forEach(x=>{
+
+        const p=
+            products.find(y=>y.id===x.productId);
+
+        if(p){
+
+            p.stock=x.qty;
+
+            history.push({
+
+                product:p.name,
+
+                type:"Voice Audit",
+
+                qty:x.qty
+
+            });
+
+        }
+
+    });
+
+
+    voiceResults=[];
+
+    renderVoiceResults();
+
+    renderAll();
+
+
+    showNotification(
+        "อัปเดตสต๊อกจาก Voice AI แล้ว"
+    );
+
+}
+
+
+/* =====================================================
+   QUICK CALCULATOR WIZARD
+===================================================== */
+
+/*
+   ค่าประมาณสำหรับ Demo:
+   - ปูนซีเมนต์ = 7 ถุง / 1 m³
+   - ทราย = 0.50 m³ / 1 m³ คอนกรีต
+   - กระเบื้อง 60x60 = 2.78 แผ่น / m²
+   - เผื่อกระเบื้องเริ่มต้น 5%
+
+   หมายเหตุ:
+   ค่าดังกล่าวเป็น "ค่าประมาณเบื้องต้น" สำหรับช่วยขายสินค้า
+   ไม่ใช่การออกแบบโครงสร้างหรือ mix design สำหรับงานจริง
+*/
+
+const calculatorConfig = {
+    cementBagsPerM3: 7,
+    sandM3PerM3: 0.50,
+    tilePiecesPerM2: 2.78
+};
+
+let calculatorItems = [];
+
+function getCalculatorInputs(){
+    const width =
+        Number(document.getElementById("calc-width")?.value)||0;
+
+    const length =
+        Number(document.getElementById("calc-length")?.value)||0;
+
+    const thicknessCm =
+        Number(document.getElementById("calc-thickness")?.value)||0;
+
+    const waste =
+        Number(document.getElementById("calc-waste")?.value)||0;
+
+    return {
+        width,
+        length,
+        thicknessCm,
+        waste:Math.max(0,Math.min(waste,30))
+    };
+}
+
+
+function calculateMaterials(){
+
+    const {
+        width,
+        length,
+        thicknessCm,
+        waste
+    } = getCalculatorInputs();
+
+    const area = width*length;
+    const volume = area*(thicknessCm/100);
+
+    const cementBags =
+        Math.ceil(
+            volume*calculatorConfig.cementBagsPerM3
+        );
+
+    const sandM3 =
+        volume*calculatorConfig.sandM3PerM3;
+
+    const sandOrder =
+        Math.ceil(sandM3*10)/10;
+
+    const tilePieces =
+        Math.ceil(
+            area*
+            calculatorConfig.tilePiecesPerM2*
+            (1+waste/100)
+        );
+
+    const tileBoxes =
+        Math.ceil(tilePieces/4);
+
+    calculatorItems=[];
+
+    if(cementBags>0){
+        const cement=
+            products.find(p=>p.id===1);
+
+        if(cement){
+            calculatorItems.push({
+                productId:cement.id,
+                name:cement.name,
+                qty:cementBags,
+                unit:"ถุง",
+                detail:`ประมาณ ${cementBags} ถุง`
+            });
+        }
+    }
+
+    if(sandOrder>0){
+        const sand=
+            products.find(p=>p.id===9);
+
+        if(sand){
+            calculatorItems.push({
+                productId:sand.id,
+                name:sand.name,
+                qty:sandOrder,
+                unit:"คิว",
+                detail:`ประมาณ ${sandOrder.toFixed(1)} คิว`
+            });
+        }
+    }
+
+    if(tileBoxes>0){
+        const tile=
+            products.find(p=>p.id===3);
+
+        if(tile){
+            calculatorItems.push({
+                productId:tile.id,
+                name:tile.name,
+                qty:tileBoxes,
+                unit:"กล่อง",
+                detail:`ประมาณ ${tileBoxes} กล่อง (${tilePieces} แผ่น)`
+            });
+        }
+    }
+
+    const areaEl=
+        document.getElementById("calc-area");
+
+    const volumeEl=
+        document.getElementById("calc-volume");
+
+    if(areaEl){
+        areaEl.textContent=
+            area.toFixed(2)+" m²";
+    }
+
+    if(volumeEl){
+        volumeEl.textContent=
+            volume.toFixed(2)+" m³";
+    }
+
+    renderCalculatorResults(
+        area,
+        volume,
+        cementBags,
+        sandOrder,
+        tilePieces,
+        tileBoxes
+    );
+}
+
+
+function renderCalculatorResults(
+    area,
+    volume,
+    cementBags,
+    sandM3,
+    tilePieces,
+    tileBoxes
+){
+
+    const result=
+        document.getElementById("calculator-results");
+
+    const cartCount=
+        document.getElementById("calculator-cart-count");
+
+    const summary=
+        document.getElementById("calculator-summary");
+
+    if(!result) return;
+
+    if(area<=0){
+
+        result.innerHTML=`
+            <div class="text-xs text-slate-400
+                        text-center py-5">
+                กรุณากรอกกว้างและยาวมากกว่า 0
+            </div>
+        `;
+
+        if(summary){
+            summary.textContent=
+                "กรอกพื้นที่เพื่อดูรายการวัสดุ";
+        }
+
+        return;
+    }
+
+    const rows=[
+        {
+            icon:"fa-cubes",
+            name:"ปูนซีเมนต์ปอร์ตแลนด์",
+            qty:cementBags,
+            unit:"ถุง",
+            color:"bg-blue-50 text-blue-700",
+            productId:1
+        },
+        {
+            icon:"fa-mound",
+            name:"ทรายก่อสร้าง",
+            qty:sandM3.toFixed(1),
+            unit:"คิว",
+            color:"bg-amber-50 text-amber-700",
+            productId:9
+        },
+        {
+            icon:"fa-border-all",
+            name:"กระเบื้องพื้น 60x60",
+            qty:tileBoxes,
+            unit:"กล่อง",
+            color:"bg-purple-50 text-purple-700",
+            productId:3,
+            extra:`${tilePieces} แผ่น`
+        }
+    ];
+
+    result.innerHTML=
+        rows.map(row=>{
+
+            const p=
+                products.find(x=>x.id===row.productId);
+
+            const stock=
+                p?p.stock:0;
+
+            const needed=
+                Number(row.qty);
+
+            const enough=
+                stock>=needed;
+
+            return `
+                <div class="bg-slate-50 rounded-xl p-3">
+
+                    <div class="flex items-center gap-3">
+
+                        <div class="w-10 h-10 rounded-xl
+                                    ${row.color}
+                                    flex items-center justify-center">
+
+                            <i class="fa-solid ${row.icon}"></i>
+
+                        </div>
+
+                        <div class="flex-1">
+
+                            <div class="text-xs font-bold">
+                                ${row.name}
+                            </div>
+
+                            <div class="text-[9px] text-slate-500">
+                                ${row.extra||"คำนวณจากพื้นที่จริง"}
+                            </div>
+
+                        </div>
+
+                        <div class="text-right">
+
+                            <div class="font-bold text-sm">
+                                ${row.qty}
+                                <span class="text-[10px]">
+                                    ${row.unit}
+                                </span>
+                            </div>
+
+                            <div class="text-[9px]
+                                ${enough?
+                                "text-green-600":
+                                "text-red-500"}">
+
+                                สต๊อก ${stock}
+                                ${enough?"✓":"⚠️"}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            `;
+
+        }).join("");
+
+    if(cartCount){
+        cartCount.textContent=
+            calculatorItems.length+" รายการ";
+    }
+
+    if(summary){
+
+        summary.innerHTML=`
+            <div>
+                พื้นที่ <b>${area.toFixed(2)} m²</b>
+                · ปริมาตร <b>${volume.toFixed(2)} m³</b>
+            </div>
+
+            <div class="mt-2 text-[10px] text-cyan-100">
+                ปูน ${cementBags} ถุง ·
+                ทราย ${sandM3.toFixed(1)} คิว ·
+                กระเบื้อง ${tileBoxes} กล่อง
+                (${tilePieces} แผ่น)
+            </div>
+        `;
+    }
+}
+
+
+function addCalculatorToCart(){
+
+    if(!calculatorItems.length){
+
+        showNotification(
+            "กรุณากรอกพื้นที่ก่อนคำนวณ"
+        );
+
+        return;
+    }
+
+    let added=0;
+    let notEnough=[];
+
+    calculatorItems.forEach(item=>{
+
+        const p=
+            products.find(x=>x.id===item.productId);
+
+        if(!p) return;
+
+        const existing=
+            cart.find(x=>x.productId===item.productId);
+
+        if(existing){
+            existing.qty+=Number(item.qty);
+        }else{
+            cart.push({
+                productId:item.productId,
+                qty:Number(item.qty)
+            });
+        }
+
+        added++;
+
+        if(p.stock<Number(item.qty)){
+            notEnough.push(
+                `${p.name} เหลือ ${p.stock}`
+            );
+        }
+
+    });
+
+    if(notEnough.length){
+
+        showNotification(
+            `เพิ่มเข้าบิลแล้ว แต่สต๊อกไม่พอ ${notEnough.length} รายการ`
+        );
+
+    }else{
+
+        showNotification(
+            `เพิ่มวัสดุ ${added} รายการเข้าบิลแล้ว`
+        );
+
+    }
+
+    updateCalculatorCartCount();
+}
+
+
+function updateCalculatorCartCount(){
+
+    const el=
+        document.getElementById(
+            "calculator-cart-count"
+        );
+
+    if(el){
+
+        el.textContent=
+            calculatorItems.length+" รายการ";
+    }
+}
+
+
+function openCalculatorSale(){
+
+    if(!calculatorItems.length){
+
+        showNotification(
+            "กรุณาคำนวณวัสดุก่อน"
+        );
+
+        return;
+    }
+
+    document.getElementById("modal-title")
+        .textContent="🧮 รายการวัสดุจาก Quick Calculator";
+
+    document.getElementById("modal-body")
+        .innerHTML=`
+
+            <div class="space-y-3">
+
+                <div class="bg-cyan-50
+                            rounded-xl p-4">
+
+                    <div class="font-bold text-sm
+                                text-cyan-800">
+                        พร้อมขายจากพื้นที่จริง
+                    </div>
+
+                    <div class="text-[10px]
+                                text-cyan-700 mt-1">
+                        ระบบดึงจำนวนที่คำนวณได้จากหน้างาน
+                        มาเป็นรายการขายให้แล้ว
+                    </div>
+
+                </div>
+
+                ${calculatorItems.map(item=>{
+
+                    const p=
+                        products.find(
+                            x=>x.id===item.productId
+                        );
+
+                    if(!p) return "";
+
+                    return `
+                        <div class="card p-3">
+
+                            <div class="flex
+                                        justify-between
+                                        items-center">
+
+                                <div>
+
+                                    <div class="text-xs font-bold">
+                                        ${p.name}
+                                    </div>
+
+                                    <div class="text-[9px]
+                                                text-slate-500">
+                                        สต๊อก ${p.stock}
+                                        · ${p.price.toLocaleString()}
+                                        บาท / หน่วย
+                                    </div>
+
+                                </div>
+
+                                <div class="text-right">
+
+                                    <div class="font-bold
+                                                text-blue-700">
+                                        ${item.qty}
+                                        ${item.unit}
+                                    </div>
+
+                                    <div class="text-[9px]
+                                                text-slate-500">
+                                        ${(p.price*Number(item.qty))
+                                        .toLocaleString()}
+                                        บาท
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    `;
+
+                }).join("")}
+
+                <button onclick="addCalculatorToCart();closeModal()"
+                        class="w-full bg-emerald-600
+                               text-white py-3 rounded-xl
+                               font-bold">
+
+                    <i class="fa-solid fa-cart-plus mr-1"></i>
+                    ยืนยันเพิ่มเข้าบิล
+                </button>
+
+                <button onclick="sellCalculatorItems()"
+                        class="w-full bg-blue-600
+                               text-white py-3 rounded-xl
+                               font-bold">
+
+                    <i class="fa-solid fa-cash-register mr-1"></i>
+                    ขายทันทีและตัดสต๊อก
+                </button>
+
+            </div>
+        `;
+
+    document.getElementById("modal")
+        .classList.remove("hidden");
+}
+
+
+function sellCalculatorItems(){
+
+    let soldTotal=0;
+    let soldCount=0;
+    let failed=[];
+
+    calculatorItems.forEach(item=>{
+
+        const p=
+            products.find(
+                x=>x.id===item.productId
+            );
+
+        const qty=
+            Number(item.qty);
+
+        if(!p || qty<=0) return;
+
+        if(p.stock<qty){
+
+            failed.push(p.name);
+            return;
+        }
+
+        p.stock-=qty;
+
+        const amount=
+            p.price*qty;
+
+        soldTotal+=amount;
+        soldCount++;
+
+        history.push({
+            product:p.name,
+            type:"ขายจาก Quick Calculator",
+            qty
+        });
+
+        revenue.push({
+            amount,
+            date:new Date().toDateString(),
+            product:p.name
+        });
+
+    });
+
+    closeModal();
+
+    renderAll();
+
+    if(failed.length){
+
+        showNotification(
+            `ขายสำเร็จ ${soldCount} รายการ แต่สต๊อกไม่พอ ${failed.length} รายการ`
+        );
+
+    }else{
+
+        showNotification(
+            `ขายสำเร็จ ${soldCount} รายการ รวม ${soldTotal.toLocaleString()} บาท`
+        );
+
+    }
+
+}
+
+/* =====================================================
+   TRUCK OPTIMIZER
+===================================================== */
+
+function calculateTruck(){
+
+    const capacity=
+        Number(
+            document.getElementById("truck-type")?.value
+        )||1000;
+
+
+    const cement=
+        Number(
+            document.getElementById("truck-cement")?.value
+        )||0;
+
+
+    const steel=
+        Number(
+            document.getElementById("truck-steel")?.value
+        )||0;
+
+
+    const tile=
+        Number(
+            document.getElementById("truck-tile")?.value
+        )||0;
+
+
+    const sand=
+        Number(
+            document.getElementById("truck-sand")?.value
+        )||0;
+
+
+    const cementWeight=cement*50;
+
+    const steelWeight=steel*18;
+
+    const tileWeight=tile*20;
+
+    const sandWeight=sand*25;
+
+
+    const total=
+        cementWeight+
+        steelWeight+
+        tileWeight+
+        sandWeight;
+
+
+    const percent=
+        Math.round(total/capacity*100);
+
+
+    let status="ปลอดภัย";
+
+    let color="green";
+
+
+    if(total>capacity){
+
+        status="เกินพิกัด";
+
+        color="red";
+
+    }else if(percent>=80){
+
+        status="ใกล้เต็ม";
+
+        color="amber";
+
+    }
+
+
+    let advice="";
+
+    if(total>capacity){
+
+        advice=
+            "⚠️ น้ำหนักเกินพิกัด แนะนำแบ่งเที่ยวส่งหรือเปลี่ยนรถที่รับน้ำหนักได้มากกว่า";
+
+    }else if(percent>=80){
+
+        advice=
+            "🟡 น้ำหนักใกล้เต็ม ควรตรวจจุดศูนย์ถ่วงก่อนออกเดินทาง";
+
+    }else{
+
+        advice=
+            "🟢 น้ำหนักอยู่ในช่วงที่ระบบกำหนด";
+
+    }
+
+
+    document.getElementById("truck-result")
+        .innerHTML=`
+
+            <div class="flex justify-between items-center">
+
+                <div>
+
+                    <div class="text-xs text-slate-500">
+                        น้ำหนักรวม
+                    </div>
+
+                    <div class="text-3xl font-bold">
+                        ${total.toLocaleString()}
+                        <span class="text-sm">
+                            kg
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="text-right">
+
+                    <span class="badge
+                        ${color==="green"?
+                        "bg-green-100 text-green-700":
+                        color==="amber"?
+                        "bg-amber-100 text-amber-700":
+                        "bg-red-100 text-red-700"}">
+
+                        ${status}
+
+                    </span>
+
+                    <div class="text-[10px] text-slate-500 mt-2">
+                        ใช้ความจุ ${percent}%
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="w-full h-3 bg-slate-100
+                        rounded-full mt-4 overflow-hidden">
+
+                <div class="h-full
+                    ${color==="green"?
+                    "bg-green-500":
+                    color==="amber"?
+                    "bg-amber-500":
+                    "bg-red-500"}"
+                    style="width:${Math.min(percent,100)}%">
+                </div>
+
+            </div>
+
+
+            <div class="bg-slate-50
+                        rounded-xl p-3 mt-3
+                        text-[10px]">
+
+                ${advice}
+
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 mt-3">
+
+                <div class="stat-box">
+
+                    <div class="text-[9px]">
+                        ปูน
+                    </div>
+
+                    <b class="text-xs">
+                        ${cementWeight} kg
+                    </b>
+
+                </div>
+
+                <div class="stat-box">
+
+                    <div class="text-[9px]">
+                        เหล็ก
+                    </div>
+
+                    <b class="text-xs">
+                        ${steelWeight} kg
+                    </b>
+
+                </div>
+
+                <div class="stat-box">
+
+                    <div class="text-[9px]">
+                        อื่นๆ
+                    </div>
+
+                    <b class="text-xs">
+                        ${(tileWeight+sandWeight)} kg
+                    </b>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+    renderTruckVisual(
+        cement,
+        steel,
+        tile,
+        sand
+    );
+
+}
+
+
+function renderTruckVisual(
+    cement,
+    steel,
+    tile,
+    sand
+){
+
+    const bed=
+        document.getElementById("truck-bed");
+
+
+    if(!bed) return;
+
+
+    bed.querySelectorAll(".load-item")
+        .forEach(x=>x.remove());
+
+
+    let items=[];
+
+
+    if(cement>0){
+
+        items.push({
+            name:`ปูน ${cement}`,
+            x:30,
+            y:75,
+            w:35,
+            h:35,
+            color:"#2563eb"
+        });
+
+    }
+
+
+    if(steel>0){
+
+        items.push({
+            name:`เหล็ก ${steel}`,
+            x:5,
+            y:20,
+            w:90,
+            h:18,
+            color:"#64748b"
+        });
+
+    }
+
+
+    if(tile>0){
+
+        items.push({
+            name:`กระเบื้อง ${tile}`,
+            x:50,
+            y:120,
+            w:35,
+            h:35,
+            color:"#7c3aed"
+        });
+
+    }
+
+
+    if(sand>0){
+
+        items.push({
+            name:`ทราย ${sand}`,
+            x:5,
+            y:145,
+            w:35,
+            h:35,
+            color:"#d97706"
+        });
+
+    }
+
+
+    items.forEach(item=>{
+
+        const div=
+            document.createElement("div");
+
+        div.className="load-item";
+
+        div.style.left=item.x+"%";
+
+        div.style.top=item.y+"px";
+
+        div.style.width=item.w+"%";
+
+        div.style.height=item.h+"px";
+
+        div.style.background=item.color;
+
+        div.textContent=item.name;
+
+        bed.appendChild(div);
+
+    });
+
+}
+
+
+/* =====================================================
+   TRUCK SAFETY
+===================================================== */
+
+function showTruckAdvice(){
+
+    const capacity=
+        Number(document.getElementById("truck-type").value);
+
+
+    const cement=
+        Number(document.getElementById("truck-cement").value)||0;
+
+    const steel=
+        Number(document.getElementById("truck-steel").value)||0;
+
+    const tile=
+        Number(document.getElementById("truck-tile").value)||0;
+
+    const sand=
+        Number(document.getElementById("truck-sand").value)||0;
+
+
+    const total=
+        cement*50+
+        steel*18+
+        tile*20+
+        sand*25;
+
+
+    document.getElementById("modal-title")
+        .textContent="🛡️ Truck Safety Report";
+
+
+    document.getElementById("modal-body")
+        .innerHTML=`
+
+            <div class="space-y-3">
+
+                <div class="
+                    ${total>capacity?
+                    "bg-red-50 text-red-700":
+                    "bg-green-50 text-green-700"}
+                    rounded-xl p-4">
+
+                    <div class="font-bold">
+                        ${total>capacity?
+                        "⚠️ ไม่ควรออกเดินทาง":
+                        "✓ ผ่านการตรวจเบื้องต้น"}
+                    </div>
+
+                    <div class="text-xs mt-1">
+                        น้ำหนัก ${total.toLocaleString()} kg
+                        /
+                        ${capacity.toLocaleString()} kg
+                    </div>
+
+                </div>
+
+
+                <div class="bg-blue-50
+                            text-blue-700
+                            rounded-xl p-4">
+
+                    <div class="font-bold text-sm">
+                        คำแนะนำการจัดวาง
+                    </div>
+
+                    <ul class="text-xs mt-2 space-y-1">
+
+                        <li>
+                            • วางสินค้าหนักไว้ใกล้จุดกึ่งกลาง
+                        </li>
+
+                        <li>
+                            • กระจายน้ำหนักซ้าย-ขวา
+                        </li>
+
+                        <li>
+                            • มัดเหล็กเส้นให้แน่นหนา
+                        </li>
+
+                        <li>
+                            • ห้ามให้ของยื่นเกินขอบรถโดยไม่จัดการตามกฎหมาย
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+                <button onclick="closeModal()"
+                        class="w-full bg-slate-900
+                               text-white py-3
+                               rounded-xl">
+
+                    เข้าใจแล้ว
+
+                </button>
+
+            </div>
+
+        `;
+
+
+    document.getElementById("modal")
+        .classList.remove("hidden");
+
+}
+
+
+/* =====================================================
+   HISTORY
+===================================================== */
+
+function renderHistory(){
+
+    document.getElementById("history-items-container")
+        .innerHTML=
+
+        history.length
+
+        ?
+
+        history.slice().reverse().map(h=>`
+
+            <div class="card p-4">
+
+                <div class="flex justify-between">
+
+                    <div>
+
+                        <div class="font-bold text-xs">
+                            ${h.product}
+                        </div>
+
+                        <div class="text-[9px] text-slate-500">
+                            ${h.type}
+                        </div>
+
+                    </div>
+
+                    <div class="font-bold">
+                        ${h.qty}
+                    </div>
+
+                </div>
+
+            </div>
+
+        `).join("")
+
+        :
+
+        `<div class="text-xs text-slate-400 text-center py-10">
+            ยังไม่มีประวัติ
+        </div>`;
+
+}
+
+
+function clearHistory(){
+
+    history=[];
+
+    renderHistory();
+
+    renderHome();
+
+    showNotification("ล้างประวัติแล้ว");
+
+}
+
+
+/* =====================================================
+   REVENUE
+===================================================== */
+
+function renderRevenue(){
+
+    const today=
+        new Date().toDateString();
+
+
+    const list=
+        revenue.filter(x=>x.date===today);
+
+
+    const total=
+        list.reduce(
+            (s,x)=>s+x.amount,0
+        );
+
+
+    document.getElementById("revenue-total")
+        .textContent=
+        total.toLocaleString()+" บาท";
+
+
+    document.getElementById("revenue-list")
+        .innerHTML=
+
+        list.length
+
+        ?
+
+        list.slice().reverse().map(x=>`
+
+            <div class="card p-4">
+
+                <div class="flex justify-between">
+
+                    <div>
+
+                        <div class="font-bold text-xs">
+                            ${x.product}
+                        </div>
+
+                        <div class="text-[9px] text-slate-500">
+                            วันนี้
+                        </div>
+
+                    </div>
+
+                    <div class="font-bold text-green-600">
+                        +${x.amount.toLocaleString()}
+                    </div>
+
+                </div>
+
+            </div>
+
+        `).join("")
+
+        :
+
+        `<div class="text-xs text-slate-400
+                    text-center py-10">
+            ยังไม่มียอดขายวันนี้
+        </div>`;
+
+}
+
+
+/* =====================================================
+   BARCODE DEMO
+===================================================== */
+
+function demoBarcodeScan(){
+
+    const code="8850001001";
+
+    const p=
+        products.find(x=>x.barcode===code);
+
+    if(p){
+
+        document.getElementById("stock-search")
+            .value=p.barcode;
+
+        renderStockPage();
+
+        showNotification(
+            "สแกนพบ: "+p.name
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   RENDER ALL
+===================================================== */
+
+function renderAll(){
+
+    renderHome();
+
+    renderStockPage();
+
+    renderHistory();
+
+    renderRevenue();
+
+    calculateTruck();
+
+}
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+function showNotification(message){
+
+    const toast=
+        document.getElementById("toast");
+
+
+    toast.textContent=message;
+
+    toast.classList.remove("hidden");
+
+
+    clearTimeout(window.toastTimer);
+
+
+    window.toastTimer=
+        setTimeout(()=>{
+
+            toast.classList.add("hidden");
+
+        },2500);
+
+}
+
+</script>
+
+</body>
+</html>
